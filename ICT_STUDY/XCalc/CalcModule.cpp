@@ -132,119 +132,126 @@ bool SplitSentence(String sSentence , TList *pList, /*OUT*/int &iErrIdx)
 	int iPointCount = 0; // 소숫점 개수
 
 	String sBuf;
-
-	for (int i = 1; i <= len; i++)
+	try
 	{
 
-		if( isdigit(s[i]) || s[i] == '.')
+		for (int i = 1; i <= len; i++)
 		{
-			if( bNum == false )
+
+			if( isdigit(s[i]) || s[i] == '.')
 			{
-				//  연속 숫자가 나오면 에러 처리
-				if( pList->Count>0 && ((CalcItem*)pList->Items[pList->Count-1])->m_eType == CT_NUM )
+				if( bNum == false )
+				{
+					//  연속 숫자가 나오면 에러 처리
+					if( pList->Count>0 && ((CalcItem*)pList->Items[pList->Count-1])->m_eType == CT_NUM )
+					{
+						iErrIdx = i-1;
+						return false;
+
+					}
+
+					// 숫자 시작
+					bNum=true;
+					iPointCount = 0;
+				}
+
+				if( s[i] == '.' )
+				{
+					if( iPointCount > 0) // error
+					{
+						iErrIdx = i-1;
+						return false;
+					}
+
+					iPointCount ++;
+				}
+
+
+				sBuf += s[i];
+
+
+			}
+			else if( s[i] == '(')
+			{
+				AddSplitedItem(pList, sBuf, bNum, bFunc );
+
+				iDepth ++;
+				pList->Add(new CalcItem(CT_OPEN_BRACKET, s[i]));
+
+			}
+			else if( s[i] == ')')
+			{
+				AddSplitedItem(pList, sBuf, bNum, bFunc );
+
+				iDepth --;
+				pList->Add(new CalcItem(CT_CLOSE_BRACKET, s[i]));
+
+				if( iDepth < 0) // error
 				{
 					iErrIdx = i-1;
 					return false;
-
 				}
 
-				// 숫자 시작
-				bNum=true;
-				iPointCount = 0;
 			}
-
-			if( s[i] == '.' )
+			else if( s[i] == '+' || s[i] == '-' )
 			{
-				if( iPointCount > 0) // error
+				AddSplitedItem(pList, sBuf, bNum, bFunc );
+
+				// 첫번째 +-가 오거나 , 괄호 열고 처음 오는 +- 기호는 부호 표시이다.
+				if( pList->Count == 0 || ((CalcItem*)pList->Items[pList->Count-1])->m_eType == CT_OPEN_BRACKET )
 				{
-					iErrIdx = i-1;
-					return false;
+					pList->Add(new CalcItem(CT_SIGN, s[i]));
+				}
+				else  // 나머지는 덧셈 뺄셈 연산자
+				{
+					pList->Add(new CalcItem(CT_OP, s[i]));
 				}
 
-				iPointCount ++;
 			}
+			else if(s[i] == '*' || s[i] == '/' || s[i] == '^')
+			{
+				AddSplitedItem(pList, sBuf, bNum, bFunc );
 
+				pList->Add(new CalcItem(CT_OP, s[i]));
 
-			sBuf += s[i];
+			}
+			else if( s[i] == ' ' || s[i] == '\r' || s[i] == '\n')
+			{
+				AddSplitedItem(pList, sBuf, bNum, bFunc );
+				continue;
+			}
+			else if(isalpha(s[i] ) )
+			{
+				if( bFunc == false )
+				{
+					AddSplitedItem(pList, sBuf, bNum, bFunc );
+					bFunc = true;
+				}
 
-
-		}
-		else if( s[i] == '(')
-		{
-			AddSplitedItem(pList, sBuf, bNum, bFunc );
-
-			iDepth ++;
-			pList->Add(new CalcItem(CT_OPEN_BRACKET, s[i]));
-
-		}
-		else if( s[i] == ')')
-		{
-			AddSplitedItem(pList, sBuf, bNum, bFunc );
-
-			iDepth --;
-			pList->Add(new CalcItem(CT_CLOSE_BRACKET, s[i]));
-
-			if( iDepth < 0) // error
+				sBuf += s[i];
+			}
+			else // 이외의 문자 에러
 			{
 				iErrIdx = i-1;
 				return false;
-         }
-
-		}
-		else if( s[i] == '+' || s[i] == '-' )
-		{
-			AddSplitedItem(pList, sBuf, bNum, bFunc );
-
-			// 첫번째 +-가 오거나 , 괄호 열고 처음 오는 +- 기호는 부호 표시이다.
-			if( pList->Count == 0 || ((CalcItem*)pList->Items[pList->Count-1])->m_eType == CT_OPEN_BRACKET )
-			{
-				pList->Add(new CalcItem(CT_SIGN, s[i]));
 			}
-			else  // 나머지는 덧셈 뺄셈 연산자
-			{
-				pList->Add(new CalcItem(CT_OP, s[i]));
-			}
-
 		}
-		else if(s[i] == '*' || s[i] == '/' || s[i] == '^')
-		{
-			AddSplitedItem(pList, sBuf, bNum, bFunc );
 
-			pList->Add(new CalcItem(CT_OP, s[i]));
+		// 마지막에 남 있던 데이터 추가
+		AddSplitedItem(pList, sBuf, bNum, bFunc );
 
-		}
-		else if( s[i] == ' ' || s[i] == '\r' || s[i] == '\n')
+		if( iDepth > 0) // 괄호가 안맞음
 		{
-			AddSplitedItem(pList, sBuf, bNum, bFunc );
-			continue;
-		}
-		else if(isalpha(s[i] ) )
-		{
-			if( bFunc == false )
-			{
-				AddSplitedItem(pList, sBuf, bNum, bFunc );
-				bFunc = true;
-			}
-
-			sBuf += s[i];
-		}
-		else // 이외의 문자 에러
-		{
-			iErrIdx = i-1;
 			return false;
-      }
+		}
+
+		return true;
 	}
-
-	// 마지막에 남 있던 데이터 추가
-   AddSplitedItem(pList, sBuf, bNum, bFunc );
-
-
-	if( iDepth > 0) // 괄호가 안맞음
+	catch(Exception &e)
 	{
-		return false;
-	}
+   	return false;
 
-	return true;
+   }
 }
 
 
@@ -265,216 +272,240 @@ bool Calc(TList *pList , double &dResult)
 	// 피연산자 값 저장
 	double v1, v2;
 
-	while(true)
+	try
 	{
-
-		// 계산 처리후 iIdx가 마지막 숫자에 가 있을 경우 처리
-		if( pList->Count>1 && iIdx==pList->Count-1 )
-		{
-			crnt = (CalcItem*)pList->Items[iIdx];
-
-			if( crnt->m_eType == CT_NUM)
-				iIdx--;
-      }
-
-
-		if( iIdx < 0) iIdx = 0;
-
-
-		if( iIdx >= 0)
-		{
-			crnt = (CalcItem*)pList->Items[iIdx];
-			type = crnt->m_eType;
-			data = crnt->m_sData;
-		}
-
-
-
-		if( pList->Count == 1 && crnt->m_eType==CT_NUM)
-		{
-			dResult = data.ToDouble();
-			return true;
-      }
-
-
-
-		if( type  == CT_SIGN)
+		while(true)
 		{
 
-			delete crnt;
-			pList->Delete(iIdx); // 하나 삭제
-
-			//다음엔 숫자가 오는것으로 가정하고  - 부호 붙임
-			if(data =="-")
+			// 계산 처리후 iIdx가 마지막 숫자에 가 있을 경우 처리
+			if( pList->Count>2 && iIdx==pList->Count-1 )
 			{
-				// 다음에 오는 숫자에 - 부호 붙임
 				crnt = (CalcItem*)pList->Items[iIdx];
-				crnt->m_sData = "-" + crnt->m_sData;
+
+				if( crnt->m_eType == CT_NUM)
+					iIdx--;
 			}
 
-			continue;
-		}
-		else if(type == CT_NUM)
-		{
-			// 괄호 벗기기 또는 함수 계산 기능 처리
-			if(iIdx>0 &&  pList->Count > iIdx+1)
+
+			if( iIdx < 0) iIdx = 0;
+
+
+			if( iIdx >= 0)
 			{
-				pre = (CalcItem*)pList->Items[iIdx-1];
-				next = (CalcItem*)pList->Items[iIdx+1];
-				if( pre->m_eType==CT_OPEN_BRACKET && next->m_eType==CT_CLOSE_BRACKET)
+				crnt = (CalcItem*)pList->Items[iIdx];
+				type = crnt->m_eType;
+				data = crnt->m_sData;
+			}
+
+
+			if( pList->Count == 1 && crnt->m_eType==CT_NUM)
+			{
+				dResult = data.ToDouble();
+				return true;
+			}
+
+
+
+			if( type  == CT_SIGN)
+			{
+				if(pList->Count == 1)
+					return false;
+
+				iIdx++;
+				continue;
+
+
+
+				continue;
+			}
+			else if(type == CT_NUM)
+			{
+				if( iIdx > 0 && ((CalcItem*)pList->Items[iIdx-1])->m_eType==CT_SIGN)
 				{
+					pre = (CalcItem*)pList->Items[iIdx-1];
+					String sign = pre->m_sData;
 
-					// 괄호 벗기기
 					delete pre;
-					delete next;
-					pList->Delete(iIdx+1);
-					pList->Delete(iIdx-1);
-					iIdx--;
+					pList->Delete(iIdx-1); // 하나 삭제
 
-					//함수 처리
-					if( iIdx>0 )
+					//- 부호 일때 숫자 반전 처리
+					if(sign =="-")
 					{
-						pre = (CalcItem*)pList->Items[iIdx-1];
-						crnt = (CalcItem*)pList->Items[iIdx];
+						// 다음에 오는 숫자에 - 부호 붙임
+						crnt->m_sData = - crnt->m_sData.ToDouble();
+					}
+					iIdx --;
+				}
 
-						if( pre->m_eType == CT_FUNC)
+				// 괄호 벗기기 또는 함수 계산 기능 처리
+				if(iIdx>0 &&  pList->Count > iIdx+1)
+				{
+					pre = (CalcItem*)pList->Items[iIdx-1];
+					next = (CalcItem*)pList->Items[iIdx+1];
+					if( pre->m_eType==CT_OPEN_BRACKET && next->m_eType==CT_CLOSE_BRACKET)
+					{
+
+						// 괄호 벗기기
+						delete pre;
+						delete next;
+						pList->Delete(iIdx+1);
+						pList->Delete(iIdx-1);
+						iIdx--;
+
+						//함수 처리
+						if( iIdx>0 )
 						{
-							double result ;
-							double value = crnt->m_sData.ToDouble();
-							String sFunc = pre->m_sData;
+							pre = (CalcItem*)pList->Items[iIdx-1];
+							crnt = (CalcItem*)pList->Items[iIdx];
 
-							if( GetFuncValue(sFunc,  value, result ) == false )
+							if( pre->m_eType == CT_FUNC)
 							{
-								LOG_PRINTFW("CALC", L"함수 계산 처리 오류 : %s(%lf)", sFunc, value);
-								//함수 오류
-								return false;
+								double result ;
+								double value = crnt->m_sData.ToDouble();
+								String sFunc = pre->m_sData;
+
+								if( GetFuncValue(sFunc,  value, result ) == false )
+								{
+									LOG_PRINTFW("CALC", L"함수 계산 처리 오류 : %s(%lf)", sFunc, value);
+									//함수 오류
+									return false;
+								}
+
+								// 함수 이름 지우고 결과 입력
+								delete pre;
+								pList->Delete(iIdx-1);
+								crnt->m_sData = FloatToStr(result);
+								LogSplitList(pList, "함수계산후");
+
+								LOG_PRINTFW("CALC", L"함수 처리 결과 : %s(%lf) = %lf", sFunc, value, result);
+								iIdx--;
+								continue ;
 							}
-
-							// 함수 이름 지우고 결과 입력
-							delete pre;
-							pList->Delete(iIdx-1);
-							crnt->m_sData = FloatToStr(result);
-							LogSplitList(pList, "함수계산후");
-
-							LOG_PRINTFW("CALC", L"함수 처리 결과 : %s(%lf) = %lf", sFunc, value, result);
-							iIdx--;
-							continue ;
 						}
+
+						continue;
 					}
 
+
+				}
+
+				// 마지막 숫자 위치에 Index가 왔을때 처리
+				if( pList->Count>=3 && pList->Count == iIdx +1 )
+				{
+					iIdx--;
 					continue;
 				}
 
 
-			}
-
-			// 마지막 숫자 위치에 Index가 왔을때 처리
-			if( pList->Count>=3 && pList->Count == iIdx +1 )
-			{
-				iIdx--;
-				continue;
-			}
-
-
-			iIdx ++;
-			continue;
-		}
-		else if( type == CT_OP)
-		{
-
-
-			next = (CalcItem*)pList->Items[iIdx+1];
-
-			// 연산자 다음에 숫자가 나오지 않으면 Calc 함수 호출(?)
-			if( next->m_eType != CT_NUM)
-			{
-				iIdx ++;
-				continue;
-			}
-
-			pre = (CalcItem*)pList->Items[iIdx-1];
-			next = (CalcItem*)pList->Items[iIdx+1];
-
-			if( data=="*" || data=="/" || data=="^")
-			{
-
-				v1 = pre->m_sData.ToDouble();
-				v2 = next->m_sData.ToDouble();
-
-				if( data == "*")
-					pre->m_sData = FloatToStr( v1 * v2 );
-				else if( data == "^")
-					pre->m_sData = FloatToStr( pow( v1 , v2) );
-				else if( v2 == 0.0 )
-					return false;
-				else
-					pre->m_sData = FloatToStr( v1 / v2 );
-
-				// 계산 끝난 데이터 삭제
-				delete next;
-				delete crnt;
-				pList->Delete(iIdx+1);
-				pList->Delete(iIdx);
-				iIdx-=2;
-
-				LogSplitList(pList, "곱셈나눗셈 연산후");
-
-				continue;
-			}
-			else
-			{
-
-				// + 나 - 연산자이고 다음에 우선순위가 높은 연산자가 나올때 건너뜀
-				if(pList->Count > iIdx+2 )
+				if( pList->Count > iIdx+1 )
 				{
-					CalcItem * next2 = (CalcItem*)pList->Items[iIdx+2];
+					iIdx ++;
+            }
+				continue;
+			}
+			else if( type == CT_OP)
+			{
 
-					if( next2->m_sData=="*" || next2->m_sData=="/" || next2->m_sData=="^" )
+
+				next = (CalcItem*)pList->Items[iIdx+1];
+
+				// 연산자 다음에 숫자가 나오지 않으면 Calc 함수 호출(?)
+				if( next->m_eType != CT_NUM)
+				{
+					iIdx ++;
+					continue;
+				}
+
+				pre = (CalcItem*)pList->Items[iIdx-1];
+				next = (CalcItem*)pList->Items[iIdx+1];
+
+				if( data=="*" || data=="/" || data=="^")
+				{
+
+					v1 = pre->m_sData.ToDouble();
+					v2 = next->m_sData.ToDouble();
+
+					if( data == "*")
+						pre->m_sData = FloatToStr( v1 * v2 );
+					else if( data == "^")
+						pre->m_sData = FloatToStr( pow( v1 , v2) );
+					else if( v2 == 0.0 )
+						return false;
+					else
+						pre->m_sData = FloatToStr( v1 / v2 );
+
+					// 계산 끝난 데이터 삭제
+					delete next;
+					delete crnt;
+					pList->Delete(iIdx+1);
+					pList->Delete(iIdx);
+					iIdx-=2;
+
+					LogSplitList(pList, "곱셈나눗셈 연산후");
+
+					continue;
+				}
+				else
+				{
+
+					// + 나 - 연산자이고 다음에 우선순위가 높은 연산자가 나올때 건너뜀
+					if(pList->Count > iIdx+2 )
 					{
-						iIdx += 2;
-						continue;
+						CalcItem * next2 = (CalcItem*)pList->Items[iIdx+2];
+
+						if( next2->m_sData=="*" || next2->m_sData=="/" || next2->m_sData=="^" )
+						{
+							iIdx += 2;
+							continue;
+						}
+
 					}
+
+					v1 = pre->m_sData.ToDouble();
+					v2 = next->m_sData.ToDouble();
+
+					if( data == "+")
+						pre->m_sData = FloatToStr( v1 + v2 );
+					else //
+						pre->m_sData = FloatToStr( v1 - v2 );
+
+					// 계산 끝난 데이터 삭제
+					delete next;
+					delete crnt;
+					pList->Delete(iIdx+1);
+					pList->Delete(iIdx);
+					iIdx-=2;
+
+					LogSplitList(pList, "덧셈 뺄셈 연산후");
+
+					continue;
 
 				}
 
-				v1 = pre->m_sData.ToDouble();
-				v2 = next->m_sData.ToDouble();
+			}
+			else // 숫자나 연산자가 아닐경우 다음으로 넘어감
+			{
+				// pi상수 처리
+				if( crnt->m_sData.UpperCase() == "PI")
+				{
+					crnt->m_eType = CT_NUM;
+					crnt->m_sData = FloatToStr(M_PI);
+					continue;
+				}
 
-				if( data == "+")
-					pre->m_sData = FloatToStr( v1 + v2 );
-				else //
-					pre->m_sData = FloatToStr( v1 - v2 );
-
-				// 계산 끝난 데이터 삭제
-				delete next;
-				delete crnt;
-				pList->Delete(iIdx+1);
-				pList->Delete(iIdx);
-				iIdx-=2;
-
-				LogSplitList(pList, "덧셈 뺄셈 연산후");
-
+				iIdx++;
 				continue;
 
 			}
 
 		}
-		else // 숫자나 연산자가 아닐경우 다음으로 넘어감
-		{
-			// pi상수 처리
-			if( crnt->m_sData.UpperCase() == "PI")
-			{
-				crnt->m_eType = CT_NUM;
-				crnt->m_sData = FloatToStr(M_PI);
-				continue;
-         }
-
-			iIdx++;
-			continue;
-
-		}
-
 	}
+	catch(Exception &e)
+	{
+   	return false;
+
+
+   }
 
 
 

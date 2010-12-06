@@ -20,6 +20,7 @@ __published:	// IDE-managed Components
 	TToolButton *ToolButton1;
 	TImageList *ImageList1;
 	TRadioGroup *RG_Angle;
+	TStatusBar *SB_Msg;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);

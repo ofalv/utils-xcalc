@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'XCalc - ICT '#44228#49328#44592
-  ClientHeight = 185
+  ClientHeight = 219
   ClientWidth = 449
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -21,7 +21,7 @@ object Form1: TForm1
     Left = 0
     Top = 31
     Width = 449
-    Height = 154
+    Height = 169
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -32,8 +32,7 @@ object Form1: TForm1
     ParentFont = False
     TabOrder = 0
     OnKeyPress = M_SentenceKeyPress
-    ExplicitWidth = 421
-    ExplicitHeight = 175
+    ExplicitHeight = 138
   end
   object ToolBar1: TToolBar
     Left = 0
@@ -45,7 +44,6 @@ object Form1: TForm1
     Caption = 'ToolBar1'
     Images = ImageList1
     TabOrder = 1
-    ExplicitWidth = 421
     object ToolButton1: TToolButton
       Left = 0
       Top = 0
@@ -67,6 +65,19 @@ object Form1: TForm1
       TabOrder = 0
       OnClick = RG_AngleClick
     end
+  end
+  object SB_Msg: TStatusBar
+    Left = 0
+    Top = 200
+    Width = 449
+    Height = 19
+    Panels = <
+      item
+        Width = 50
+      end>
+    ExplicitLeft = 296
+    ExplicitTop = 160
+    ExplicitWidth = 0
   end
   object ImageList1: TImageList
     Left = 372
