@@ -30,10 +30,9 @@ object Form1: TForm1
     Font.Style = []
     ImeName = 'Microsoft Office IME 2007'
     ParentFont = False
+    ScrollBars = ssBoth
     TabOrder = 0
     OnKeyPress = M_SentenceKeyPress
-    ExplicitWidth = 449
-    ExplicitHeight = 169
   end
   object ToolBar1: TToolBar
     Left = 0
@@ -45,7 +44,6 @@ object Form1: TForm1
     Caption = 'ToolBar1'
     Images = ImageList1
     TabOrder = 1
-    ExplicitWidth = 449
     object ToolButton1: TToolButton
       Left = 0
       Top = 0
@@ -77,8 +75,6 @@ object Form1: TForm1
       item
         Width = 50
       end>
-    ExplicitTop = 200
-    ExplicitWidth = 449
   end
   object ImageList1: TImageList
     Left = 372
