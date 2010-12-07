@@ -314,9 +314,6 @@ bool Calc(TList *pList , double &dResult)
 				iIdx++;
 				continue;
 
-
-
-				continue;
 			}
 			else if(type == CT_NUM)
 			{
