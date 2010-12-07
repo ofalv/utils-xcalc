@@ -1,4 +1,4 @@
-object Form1: TForm1
+object F_XCalcMain: TF_XCalcMain
   Left = 0
   Top = 0
   Caption = 'ICT '#44228#49328#44592'  (Ver 1.00)'
@@ -10,7 +10,9 @@ object Form1: TForm1
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  FormStyle = fsStayOnTop
   OldCreateOrder = False
+  Position = poDesktopCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnHide = FormHide

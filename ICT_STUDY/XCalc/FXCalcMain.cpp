@@ -5,19 +5,20 @@
 
 #include "iLogLib.h"
 
-#include "FMain.h"
+#include "FXCalcMain.h"
 #include "CalcModule.h"
+#include "FHelp.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
-TForm1 *Form1;
+TF_XCalcMain *F_XCalcMain;
 //---------------------------------------------------------------------------
-__fastcall TForm1::TForm1(TComponent* Owner)
+__fastcall TF_XCalcMain::TF_XCalcMain(TComponent* Owner)
 	: TForm(Owner)
 {
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::FormCreate(TObject *Sender)
+void __fastcall TF_XCalcMain::FormCreate(TObject *Sender)
 {
 	//
 	m_pList = new TList();
@@ -27,7 +28,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::FormDestroy(TObject *Sender)
+void __fastcall TF_XCalcMain::FormDestroy(TObject *Sender)
 {
 	//
 
@@ -35,7 +36,7 @@ void __fastcall TForm1::FormDestroy(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::FormShow(TObject *Sender)
+void __fastcall TF_XCalcMain::FormShow(TObject *Sender)
 {
 
 	//
@@ -43,7 +44,7 @@ void __fastcall TForm1::FormShow(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::FormHide(TObject *Sender)
+void __fastcall TF_XCalcMain::FormHide(TObject *Sender)
 {
 	//
 
@@ -56,29 +57,28 @@ void __fastcall TForm1::FormHide(TObject *Sender)
 
 
 
-void __fastcall TForm1::ToolButton1Click(TObject *Sender)
+void __fastcall TF_XCalcMain::ToolButton1Click(TObject *Sender)
 {
-	SB_Msg->Panels->Items[0]->Text =  "기능없음";
-	//ShowMessage("Nothing todo ");
+	F_Help->Show();
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::ToolButton2Click(TObject *Sender)
-{
-	ShowMessage("Nothing todo ");
-
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TForm1::ToolButton3Click(TObject *Sender)
+void __fastcall TF_XCalcMain::ToolButton2Click(TObject *Sender)
 {
 	ShowMessage("Nothing todo ");
 
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TF_XCalcMain::ToolButton3Click(TObject *Sender)
+{
+	ShowMessage("Nothing todo ");
 
-void __fastcall TForm1::M_SentenceKeyPress(TObject *Sender, wchar_t &Key)
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TF_XCalcMain::M_SentenceKeyPress(TObject *Sender, wchar_t &Key)
 {
 	SB_Msg->Panels->Items[0]->Text =  "계산시작";
 	if( Key == '\r')
@@ -129,7 +129,7 @@ void __fastcall TForm1::M_SentenceKeyPress(TObject *Sender, wchar_t &Key)
 //---------------------------------------------------------------------------
 
 // Memo 문자열을 찾아서 "="기호가 들어가 있는 문자열은 제거한다.
-void __fastcall TForm1::ClearEqualLine(void)
+void __fastcall TF_XCalcMain::ClearEqualLine(void)
 {
 
 	for (int i = 0; i < M_Sentence->Lines->Count; i++)
@@ -143,7 +143,7 @@ void __fastcall TForm1::ClearEqualLine(void)
 	}
 
 }
-void __fastcall TForm1::RG_AngleClick(TObject *Sender)
+void __fastcall TF_XCalcMain::RG_AngleClick(TObject *Sender)
 {
 
 	SetAngleType((ANGLE_TYPE)RG_Angle->ItemIndex);

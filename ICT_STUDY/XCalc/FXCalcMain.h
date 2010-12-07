@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 
-#ifndef FMainH
-#define FMainH
+#ifndef FXCalcMainH
+#define FXCalcMainH
 //---------------------------------------------------------------------------
 #include <Classes.hpp>
 #include <Controls.hpp>
@@ -12,7 +12,7 @@
 #include <ImgList.hpp>
 #include <ExtCtrls.hpp>
 //---------------------------------------------------------------------------
-class TForm1 : public TForm
+class TF_XCalcMain : public TForm
 {
 __published:	// IDE-managed Components
 	TMemo *M_Sentence;
@@ -33,11 +33,11 @@ __published:	// IDE-managed Components
 private:	// User declarations
 	TList *m_pList;
 public:		// User declarations
-	__fastcall TForm1(TComponent* Owner);
+	__fastcall TF_XCalcMain(TComponent* Owner);
 	void __fastcall ClearEqualLine(void);
 
 };
 //---------------------------------------------------------------------------
-extern PACKAGE TForm1 *Form1;
+extern PACKAGE TF_XCalcMain *F_XCalcMain;
 //---------------------------------------------------------------------------
 #endif

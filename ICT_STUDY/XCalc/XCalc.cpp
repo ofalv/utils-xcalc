@@ -4,7 +4,8 @@
 #pragma hdrstop
 #include <tchar.h>
 //---------------------------------------------------------------------------
-USEFORM("FMain.cpp", Form1);
+USEFORM("FXCalcMain.cpp", F_XCalcMain);
+USEFORM("FHelp.cpp", F_Help);
 //---------------------------------------------------------------------------
 WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 {
@@ -12,7 +13,8 @@ WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	{
 		Application->Initialize();
 		Application->MainFormOnTaskBar = true;
-		Application->CreateForm(__classid(TForm1), &Form1);
+		Application->CreateForm(__classid(TF_XCalcMain), &F_XCalcMain);
+		Application->CreateForm(__classid(TF_Help), &F_Help);
 		Application->Run();
 	}
 	catch (Exception &exception)
