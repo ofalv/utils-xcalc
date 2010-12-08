@@ -1,7 +1,7 @@
 object F_XCalcMain: TF_XCalcMain
   Left = 0
   Top = 0
-  Caption = 'ICT '#44228#49328#44592'  (Ver 1.00)'
+  Caption = 'ICT '#44228#49328#44592'  ( Ver 1.01 )'
   ClientHeight = 235
   ClientWidth = 457
   Color = clBtnFace
@@ -34,6 +34,7 @@ object F_XCalcMain: TF_XCalcMain
     ParentFont = False
     ScrollBars = ssBoth
     TabOrder = 0
+    OnKeyDown = M_SentenceKeyDown
     OnKeyPress = M_SentenceKeyPress
   end
   object ToolBar1: TToolBar

@@ -30,6 +30,8 @@ __published:	// IDE-managed Components
 	void __fastcall ToolButton3Click(TObject *Sender);
 	void __fastcall M_SentenceKeyPress(TObject *Sender, wchar_t &Key);
 	void __fastcall RG_AngleClick(TObject *Sender);
+	void __fastcall M_SentenceKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
+
 private:	// User declarations
 	TList *m_pList;
 public:		// User declarations

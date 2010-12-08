@@ -81,6 +81,7 @@ void __fastcall TF_XCalcMain::ToolButton3Click(TObject *Sender)
 void __fastcall TF_XCalcMain::M_SentenceKeyPress(TObject *Sender, wchar_t &Key)
 {
 	SB_Msg->Panels->Items[0]->Text =  "계산시작";
+
 	if( Key == '\r')
 	{
 		ClearEqualLine();
@@ -147,6 +148,18 @@ void __fastcall TF_XCalcMain::RG_AngleClick(TObject *Sender)
 {
 
 	SetAngleType((ANGLE_TYPE)RG_Angle->ItemIndex);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TF_XCalcMain::M_SentenceKeyDown(TObject *Sender, WORD &Key, TShiftState Shift)
+
+{
+
+	if( Key == VK_F1 )
+	{
+		F_Help->Show();
+
+	}
 }
 //---------------------------------------------------------------------------
 

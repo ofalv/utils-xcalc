@@ -58,39 +58,39 @@
 			<TASM_Debugging>None</TASM_Debugging>
 		</PropertyGroup>
 		<ItemGroup>
-			<CppCompile Include="CalcModule.cpp">
-				<DependentOn>CalcModule.h</DependentOn>
-				<BuildOrder>3</BuildOrder>
+			<ResFiles Include="XCalc.res">
+				<BuildOrder>1</BuildOrder>
+			</ResFiles>
+			<LibFiles Include="iLogLib2010.lib">
+				<IgnorePath>true</IgnorePath>
+				<BuildOrder>4</BuildOrder>
+			</LibFiles>
+			<CppCompile Include="FHelp.cpp">
+				<Form>F_Help</Form>
+				<DependentOn>FHelp.h</DependentOn>
+				<BuildOrder>8</BuildOrder>
+			</CppCompile>
+			<None Include="XCalc.todo"/>
+			<CppCompile Include="XCalc.cpp">
+				<BuildOrder>0</BuildOrder>
 			</CppCompile>
 			<CppCompile Include="FXCalcMain.cpp">
 				<Form>F_XCalcMain</Form>
 				<DependentOn>FXCalcMain.h</DependentOn>
 				<BuildOrder>2</BuildOrder>
 			</CppCompile>
-			<CppCompile Include="VersionInfo.cpp">
-				<BuildOrder>7</BuildOrder>
+			<CppCompile Include="CalcModule.cpp">
+				<DependentOn>CalcModule.h</DependentOn>
+				<BuildOrder>3</BuildOrder>
 			</CppCompile>
 			<CppCompile Include="ToDo.cpp">
 				<BuildOrder>5</BuildOrder>
 			</CppCompile>
-			<CppCompile Include="XCalc.cpp">
-				<BuildOrder>0</BuildOrder>
+			<CppCompile Include="VersionInfo.cpp">
+				<BuildOrder>7</BuildOrder>
 			</CppCompile>
-			<LibFiles Include="iLogLib2010.lib">
-				<IgnorePath>true</IgnorePath>
-				<BuildOrder>4</BuildOrder>
-			</LibFiles>
-			<ResFiles Include="XCalc.res">
-				<BuildOrder>1</BuildOrder>
-			</ResFiles>
-			<None Include="XCalc.todo"/>
-			<CppCompile Include="FHelp.cpp">
-				<Form>F_Help</Form>
-				<DependentOn>FHelp.h</DependentOn>
-				<BuildOrder>8</BuildOrder>
-			</CppCompile>
-			<FormResources Include="FXCalcMain.dfm"/>
 			<FormResources Include="FHelp.dfm"/>
+			<FormResources Include="FXCalcMain.dfm"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
@@ -160,9 +160,9 @@
 						<Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
 					</Parameters>
 					<Excluded_Packages>
-						<Excluded_Packages Name="C:\Program Files\EurekaLog 6\CBuilder14\CExceptionExpert14.bpl">EurekaLog</Excluded_Packages>
 						<Excluded_Packages Name="$(BDS)\bin\bcboffice2k140.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
 						<Excluded_Packages Name="$(BDS)\bin\bcbofficexp140.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+						<Excluded_Packages Name="C:\Program Files\EurekaLog 6\CBuilder14\CExceptionExpert14.bpl">EurekaLog</Excluded_Packages>
 					</Excluded_Packages>
 					<ProjectProperties>
 						<ProjectProperties Name="AutoShowDeps">False</ProjectProperties>
