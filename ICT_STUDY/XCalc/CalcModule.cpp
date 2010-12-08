@@ -418,6 +418,18 @@ bool Calc(TList *pList , double &dResult)
 
 				if( data=="*" || data=="/" || data=="^")
 				{
+					// * 나 / 연산자이고 다음에 우선순위가 높은 연산자(^)가 나올때 건너뜀
+					if((data=="*" || data=="/") && pList->Count > iIdx+2 )
+					{
+						CalcItem * next2 = (CalcItem*)pList->Items[iIdx+2];
+
+						if( next2->m_sData=="^" )
+						{
+							iIdx += 2;
+							continue;
+						}
+
+					}
 
 					v1 = pre->m_sData.ToDouble();
 					v2 = next->m_sData.ToDouble();
