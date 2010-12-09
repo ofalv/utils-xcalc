@@ -25,7 +25,7 @@ String asTypeStr[]
 };
 
 static bool bIsAngleRad = false; // Radian 각도를 쓰는지 나타냄
-
+int g_iIdx;
 
 
 void SetAngleType(ANGLE_TYPE type)
@@ -71,7 +71,8 @@ bool GetFuncValue(/* IN*/String sFuncName, double dValue1, /*OUT*/double &dResul
 void LogSplitList(TList *pList, String sTitle)
 {
 
-	LOG_PRINTFW("TEST", L"------------------------- SENTENCE LIST (\"%s\") : count=%d ---------------------------", sTitle=="" ? String("no title") : sTitle , pList->Count);
+	LOG_PRINTFW("TEST", L"-------------- SENTENCE LIST (\"%s\") : count=%d , iIdx=%d ------------------"
+		, sTitle=="" ? String("no title") : sTitle , pList->Count, g_iIdx);
 
 	for (int i = 0; i < pList->Count; i++)
 	{
@@ -79,6 +80,40 @@ void LogSplitList(TList *pList, String sTitle)
 			, ((CalcItem*)pList->Items[i])->m_sData );
 	}
 
+}
+
+
+// 리스트에서 숫자의 개수를 리턴한다.
+int GetCountOfNumber(TList *pList)
+{
+	CalcItem *crnt;
+
+	int count = 0;
+	for (int i = 0; i < pList->Count; i++)
+	{
+		crnt = (CalcItem*)pList->Items[i];
+
+		if( crnt->m_eType == CT_NUM)
+			count ++;
+	}
+
+	return count;
+}
+
+// idx 이후로 뒤에 숫자가 있으면 true를 리턴한다.
+bool HaveTrailingNumber(TList *pList, int idx)
+{
+	CalcItem *crnt;
+
+	for (int i = idx; i < pList->Count; i++)
+	{
+		crnt = (CalcItem*)pList->Items[i];
+
+		if( crnt->m_eType == CT_NUM)
+			return true;
+	}
+
+	return false;
 }
 
 
@@ -264,7 +299,7 @@ bool Calc(TList *pList , double &dResult)
 	if( pList == NULL)
 		return false;
 
-	int iIdx = 0;
+	g_iIdx = 0;
 
 	CalcItem *crnt, *pre, *next;
 	CT_TYPE type;
@@ -277,22 +312,24 @@ bool Calc(TList *pList , double &dResult)
 		while(true)
 		{
 
-			// 계산 처리후 iIdx가 마지막 숫자에 가 있을 경우 처리
-			if( pList->Count>2 && iIdx==pList->Count-1 )
+			// 리스트 안에 숫자의 개수가 2개 이상이고, 현재 인덱스이후에 나오는 숫자가 없는경우
+			if( GetCountOfNumber(pList)>=2 && HaveTrailingNumber(pList, g_iIdx+1)==false )
 			{
-				crnt = (CalcItem*)pList->Items[iIdx];
+				pre = (CalcItem*)pList->Items[g_iIdx-1];
+				crnt = (CalcItem*)pList->Items[g_iIdx];
 
-				if( crnt->m_eType == CT_NUM)
-					iIdx--;
+				// 현재 인덱스 위치가 숫자이고 이전 아이템이 연산자일경우
+				if( crnt->m_eType == CT_NUM && pre->m_eType==CT_OP)
+					g_iIdx--;
 			}
 
 
-			if( iIdx < 0) iIdx = 0;
+			if( g_iIdx < 0) g_iIdx = 0;
 
 
-			if( iIdx >= 0)
+			if( g_iIdx >= 0)
 			{
-				crnt = (CalcItem*)pList->Items[iIdx];
+				crnt = (CalcItem*)pList->Items[g_iIdx];
 				type = crnt->m_eType;
 				data = crnt->m_sData;
 			}
@@ -311,19 +348,19 @@ bool Calc(TList *pList , double &dResult)
 				if(pList->Count == 1)
 					return false;
 
-				iIdx++;
+				g_iIdx++;
 				continue;
 
 			}
 			else if(type == CT_NUM)
 			{
-				if( iIdx > 0 && ((CalcItem*)pList->Items[iIdx-1])->m_eType==CT_SIGN)
+				if( g_iIdx > 0 && ((CalcItem*)pList->Items[g_iIdx-1])->m_eType==CT_SIGN)
 				{
-					pre = (CalcItem*)pList->Items[iIdx-1];
+					pre = (CalcItem*)pList->Items[g_iIdx-1];
 					String sign = pre->m_sData;
 
 					delete pre;
-					pList->Delete(iIdx-1); // 하나 삭제
+					pList->Delete(g_iIdx-1); // 하나 삭제
 
 					//- 부호 일때 숫자 반전 처리
 					if(sign =="-")
@@ -331,29 +368,30 @@ bool Calc(TList *pList , double &dResult)
 						// 다음에 오는 숫자에 - 부호 붙임
 						crnt->m_sData = - crnt->m_sData.ToDouble();
 					}
-					iIdx --;
+					g_iIdx --;
 				}
 
 				// 괄호 벗기기 또는 함수 계산 기능 처리
-				if(iIdx>0 &&  pList->Count > iIdx+1)
+				if(g_iIdx>0 &&  pList->Count > g_iIdx+1)
 				{
-					pre = (CalcItem*)pList->Items[iIdx-1];
-					next = (CalcItem*)pList->Items[iIdx+1];
+					pre = (CalcItem*)pList->Items[g_iIdx-1];
+					next = (CalcItem*)pList->Items[g_iIdx+1];
 					if( pre->m_eType==CT_OPEN_BRACKET && next->m_eType==CT_CLOSE_BRACKET)
 					{
 
 						// 괄호 벗기기
 						delete pre;
 						delete next;
-						pList->Delete(iIdx+1);
-						pList->Delete(iIdx-1);
-						iIdx--;
+						pList->Delete(g_iIdx+1);
+						pList->Delete(g_iIdx-1);
+						g_iIdx--;
+						LogSplitList(pList, "괄호벗기기");
 
 						//함수 처리
-						if( iIdx>0 )
+						if( g_iIdx>0 )
 						{
-							pre = (CalcItem*)pList->Items[iIdx-1];
-							crnt = (CalcItem*)pList->Items[iIdx];
+							pre = (CalcItem*)pList->Items[g_iIdx-1];
+							crnt = (CalcItem*)pList->Items[g_iIdx];
 
 							if( pre->m_eType == CT_FUNC)
 							{
@@ -370,12 +408,12 @@ bool Calc(TList *pList , double &dResult)
 
 								// 함수 이름 지우고 결과 입력
 								delete pre;
-								pList->Delete(iIdx-1);
+								pList->Delete(g_iIdx-1);
 								crnt->m_sData = FloatToStr(result);
 								LogSplitList(pList, "함수계산후");
 
 								LOG_PRINTFW("CALC", L"함수 처리 결과 : %s(%lf) = %lf", sFunc, value, result);
-								iIdx--;
+								g_iIdx--;
 								continue ;
 							}
 						}
@@ -387,16 +425,16 @@ bool Calc(TList *pList , double &dResult)
 				}
 
 				// 마지막 숫자 위치에 Index가 왔을때 처리
-				if( pList->Count>=3 && pList->Count == iIdx +1 )
+				if( pList->Count>=3 && pList->Count == g_iIdx +1 )
 				{
-					iIdx--;
+					g_iIdx--;
 					continue;
 				}
 
 
-				if( pList->Count > iIdx+1 )
+				if( pList->Count > g_iIdx+1 )
 				{
-					iIdx ++;
+					g_iIdx ++;
             }
 				continue;
 			}
@@ -404,28 +442,28 @@ bool Calc(TList *pList , double &dResult)
 			{
 
 
-				next = (CalcItem*)pList->Items[iIdx+1];
+				next = (CalcItem*)pList->Items[g_iIdx+1];
 
 				// 연산자 다음에 숫자가 나오지 않으면 Calc 함수 호출(?)
 				if( next->m_eType != CT_NUM)
 				{
-					iIdx ++;
+					g_iIdx ++;
 					continue;
 				}
 
-				pre = (CalcItem*)pList->Items[iIdx-1];
-				next = (CalcItem*)pList->Items[iIdx+1];
+				pre = (CalcItem*)pList->Items[g_iIdx-1];
+				next = (CalcItem*)pList->Items[g_iIdx+1];
 
 				if( data=="*" || data=="/" || data=="^")
 				{
 					// * 나 / 연산자이고 다음에 우선순위가 높은 연산자(^)가 나올때 건너뜀
-					if((data=="*" || data=="/") && pList->Count > iIdx+2 )
+					if((data=="*" || data=="/") && pList->Count > g_iIdx+2 )
 					{
-						CalcItem * next2 = (CalcItem*)pList->Items[iIdx+2];
+						CalcItem * next2 = (CalcItem*)pList->Items[g_iIdx+2];
 
 						if( next2->m_sData=="^" )
 						{
-							iIdx += 2;
+							g_iIdx += 2;
 							continue;
 						}
 
@@ -446,9 +484,9 @@ bool Calc(TList *pList , double &dResult)
 					// 계산 끝난 데이터 삭제
 					delete next;
 					delete crnt;
-					pList->Delete(iIdx+1);
-					pList->Delete(iIdx);
-					iIdx-=2;
+					pList->Delete(g_iIdx+1);
+					pList->Delete(g_iIdx);
+					g_iIdx-=2;
 
 					LogSplitList(pList, "곱셈나눗셈 연산후");
 
@@ -458,13 +496,13 @@ bool Calc(TList *pList , double &dResult)
 				{
 
 					// + 나 - 연산자이고 다음에 우선순위가 높은 연산자가 나올때 건너뜀
-					if(pList->Count > iIdx+2 )
+					if(pList->Count > g_iIdx+2 )
 					{
-						CalcItem * next2 = (CalcItem*)pList->Items[iIdx+2];
+						CalcItem * next2 = (CalcItem*)pList->Items[g_iIdx+2];
 
 						if( next2->m_sData=="*" || next2->m_sData=="/" || next2->m_sData=="^" )
 						{
-							iIdx += 2;
+							g_iIdx += 2;
 							continue;
 						}
 
@@ -481,9 +519,9 @@ bool Calc(TList *pList , double &dResult)
 					// 계산 끝난 데이터 삭제
 					delete next;
 					delete crnt;
-					pList->Delete(iIdx+1);
-					pList->Delete(iIdx);
-					iIdx-=2;
+					pList->Delete(g_iIdx+1);
+					pList->Delete(g_iIdx);
+					g_iIdx-=2;
 
 					LogSplitList(pList, "덧셈 뺄셈 연산후");
 
@@ -502,7 +540,7 @@ bool Calc(TList *pList , double &dResult)
 					continue;
 				}
 
-				iIdx++;
+				g_iIdx++;
 				continue;
 
 			}
