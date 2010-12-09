@@ -1,7 +1,7 @@
 object F_XCalcMain: TF_XCalcMain
   Left = 0
   Top = 0
-  Caption = 'ICT '#44228#49328#44592'  ( Ver 1.01 )'
+  Caption = 'ICT '#44228#49328#44592'  ( Ver 1.02 )'
   ClientHeight = 235
   ClientWidth = 457
   Color = clBtnFace
