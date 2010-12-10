@@ -107,9 +107,20 @@ void __fastcall TF_XCalcMain::M_SentenceKeyPress(TObject *Sender, wchar_t &Key)
 			double result;
 			if( Calc(m_pList , result ) == false )
 			{
+
 				String s;
-				s.sprintf(L"%d번째 문자부터 계산실패", iErrIdx+1);
-				SB_Msg->Panels->Items[0]->Text =  s;
+				if( g_sErrMsg == "")
+				{
+					s.sprintf(L"계산실패");
+					SB_Msg->Panels->Items[0]->Text =  s;
+				}
+				else
+				{
+					SB_Msg->Panels->Items[0]->Text =  g_sErrMsg;
+
+            }
+
+
 				return;
 
 			}
