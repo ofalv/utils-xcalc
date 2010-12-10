@@ -23,6 +23,9 @@ enum ANGLE_TYPE
 };
 
 
+
+extern String g_sErrMsg;
+
 extern String asTypeStr[];
 
 // 각각의 파싱한 아이템을 저장하는 클래스

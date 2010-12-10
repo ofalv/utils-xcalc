@@ -26,6 +26,7 @@ String asTypeStr[]
 
 static bool bIsAngleRad = false; // Radian 각도를 쓰는지 나타냄
 int g_iIdx;
+String g_sErrMsg;
 
 
 void SetAngleType(ANGLE_TYPE type)
@@ -295,6 +296,7 @@ bool SplitSentence(String sSentence , TList *pList, /*OUT*/int &iErrIdx)
 // 수식을 분석해서 계산하는 함수  - 재귀호출을 사용하지 않음.
 bool Calc(TList *pList , double &dResult)
 {
+	g_sErrMsg = "";
 
 	if( pList == NULL)
 		return false;
@@ -354,6 +356,7 @@ bool Calc(TList *pList , double &dResult)
 			}
 			else if(type == CT_NUM)
 			{
+				// 부호 처리
 				if( g_iIdx > 0 && ((CalcItem*)pList->Items[g_iIdx-1])->m_eType==CT_SIGN)
 				{
 					pre = (CalcItem*)pList->Items[g_iIdx-1];
