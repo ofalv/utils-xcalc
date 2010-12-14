@@ -150,6 +150,61 @@ bool AddSplitedItem(TList *pList , /*IN.OUT*/String &sItem, bool &bNum, bool &bF
 }
 
 
+
+// pList에서 마지막 2개의 구문에서 에러가 있는지를 확인함
+bool CheckSyntaxErr(TList *pList)
+{
+	int count = pList->Count;
+
+	if(count < 2 ) return true;
+
+	CalcItem * a = (CalcItem*)pList->Items[count-2];
+	CalcItem * b = (CalcItem*)pList->Items[count-1];
+
+	if( a->m_eType == CT_NUM)
+	{
+		// 숫자 다음에는 무조건 연산자가 와야함
+		if( b->m_eType != CT_OP && b->m_eType != CT_CLOSE_BRACKET)
+			return false;
+	}
+	else if( a->m_eType == CT_OPEN_BRACKET)
+	{
+		//
+		if( b->m_eType == CT_OP || b->m_eType == CT_CLOSE_BRACKET)
+			return false;
+
+	}
+	else if( a->m_eType == CT_CLOSE_BRACKET)
+	{
+		if( b->m_eType != CT_OP && b->m_eType != CT_CLOSE_BRACKET)
+			return false;
+
+	}
+	else if( a->m_eType == CT_OP) // 연산자
+	{
+		if( b->m_eType == CT_OP || b->m_eType == CT_CLOSE_BRACKET)
+			return false;
+
+	}
+	else if( a->m_eType == CT_SIGN) // +- 부호표시
+	{
+		if( b->m_eType != CT_NUM && b->m_eType != CT_OPEN_BRACKET)
+			return false;
+
+	}
+	else if( a->m_eType == CT_FUNC)
+	{
+		if( b->m_eType != CT_OPEN_BRACKET)
+			return false;
+	}
+
+
+	return true;
+}
+
+
+
+
 // sSentence 에서 입력 받은 수식을 각각의 숫자, 연산자, 괄호 등으로 잘라서
 // CalcItem 객체를 생성해서 리스트에 추가해 주는 함수
 // 변환에 문제가 있을 경우 iErrIdx에 에러가 발생한 문자의 위치를 리턴
@@ -171,7 +226,8 @@ bool SplitSentence(String sSentence , TList *pList, /*OUT*/int &iErrIdx)
 	try
 	{
 
-		for (int i = 1; i <= len; i++)
+		int i;
+		for ( i = 1; i <= len; i++)
 		{
 
 			if( isdigit(s[i]) || s[i] == '.')
@@ -214,6 +270,13 @@ bool SplitSentence(String sSentence , TList *pList, /*OUT*/int &iErrIdx)
 				iDepth ++;
 				pList->Add(new CalcItem(CT_OPEN_BRACKET, s[i]));
 
+				if(CheckSyntaxErr(pList) == false )
+				{
+					iErrIdx = i-1;
+					return false;
+				}
+
+
 			}
 			else if( s[i] == ')')
 			{
@@ -227,11 +290,22 @@ bool SplitSentence(String sSentence , TList *pList, /*OUT*/int &iErrIdx)
 					iErrIdx = i-1;
 					return false;
 				}
+				if(CheckSyntaxErr(pList) == false )
+				{
+					iErrIdx = i-1;
+					return false;
+				}
 
 			}
 			else if( s[i] == '+' || s[i] == '-' )
 			{
 				AddSplitedItem(pList, sBuf, bNum, bFunc );
+
+				if(CheckSyntaxErr(pList) == false )
+				{
+					iErrIdx = i-1;
+					return false;
+				}
 
 				// 첫번째 +-가 오거나 , 괄호 열고 처음 오는 +- 기호는 부호 표시이다.
 				if( pList->Count == 0 || ((CalcItem*)pList->Items[pList->Count-1])->m_eType == CT_OPEN_BRACKET )
@@ -243,6 +317,11 @@ bool SplitSentence(String sSentence , TList *pList, /*OUT*/int &iErrIdx)
 					pList->Add(new CalcItem(CT_OP, s[i]));
 				}
 
+				if(CheckSyntaxErr(pList) == false )
+				{
+					iErrIdx = i-1;
+					return false;
+				}
 			}
 			else if(s[i] == '*' || s[i] == '/' || s[i] == '^')
 			{
@@ -250,10 +329,21 @@ bool SplitSentence(String sSentence , TList *pList, /*OUT*/int &iErrIdx)
 
 				pList->Add(new CalcItem(CT_OP, s[i]));
 
+				if(CheckSyntaxErr(pList) == false )
+				{
+					iErrIdx = i-1;
+					return false;
+				}
+
 			}
 			else if( s[i] == ' ' || s[i] == '\r' || s[i] == '\n')
 			{
 				AddSplitedItem(pList, sBuf, bNum, bFunc );
+				if(CheckSyntaxErr(pList) == false )
+				{
+					iErrIdx = i-1;
+					return false;
+				}
 				continue;
 			}
 			else if(isalpha(s[i] ) )
@@ -261,6 +351,11 @@ bool SplitSentence(String sSentence , TList *pList, /*OUT*/int &iErrIdx)
 				if( bFunc == false )
 				{
 					AddSplitedItem(pList, sBuf, bNum, bFunc );
+					if(CheckSyntaxErr(pList) == false )
+					{
+						iErrIdx = i-1;
+						return false;
+					}
 					bFunc = true;
 				}
 
@@ -275,6 +370,11 @@ bool SplitSentence(String sSentence , TList *pList, /*OUT*/int &iErrIdx)
 
 		// 마지막에 남 있던 데이터 추가
 		AddSplitedItem(pList, sBuf, bNum, bFunc );
+		if(CheckSyntaxErr(pList) == false )
+		{
+			iErrIdx = i-1;
+			return false;
+		}
 
 		if( iDepth > 0) // 괄호가 안맞음
 		{
@@ -285,9 +385,9 @@ bool SplitSentence(String sSentence , TList *pList, /*OUT*/int &iErrIdx)
 	}
 	catch(Exception &e)
 	{
-   	return false;
+		return false;
 
-   }
+	}
 }
 
 
