@@ -1,9 +1,10 @@
 object F_Help: TF_Help
   Left = 0
   Top = 0
+  BorderStyle = bsDialog
   Caption = #44228#49328#44592' '#46020#50880#47568
-  ClientHeight = 358
-  ClientWidth = 335
+  ClientHeight = 428
+  ClientWidth = 355
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,8 +19,8 @@ object F_Help: TF_Help
   object RichEdit1: TRichEdit
     Left = 0
     Top = 0
-    Width = 335
-    Height = 358
+    Width = 355
+    Height = 428
     Align = alClient
     Color = 11796479
     Font.Charset = HANGEUL_CHARSET
@@ -48,10 +49,11 @@ object F_Help: TF_Help
       #47564#46304#49324#46988':'
       #51060#49457#50676' '
       'sylee@ict-lab.com'
-      'Twitter : @sjjssy')
+      'Twitter : @SungRyoulLee')
     ParentFont = False
     ReadOnly = True
-    ScrollBars = ssBoth
     TabOrder = 0
+    ExplicitWidth = 353
+    ExplicitHeight = 426
   end
 end
