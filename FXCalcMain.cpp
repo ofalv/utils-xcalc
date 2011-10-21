@@ -57,11 +57,6 @@ void __fastcall TF_XCalcMain::FormHide(TObject *Sender)
 
 
 
-void __fastcall TF_XCalcMain::ToolButton1Click(TObject *Sender)
-{
-	F_Help->Show();
-}
-//---------------------------------------------------------------------------
 
 void __fastcall TF_XCalcMain::ToolButton2Click(TObject *Sender)
 {
@@ -78,23 +73,34 @@ void __fastcall TF_XCalcMain::ToolButton3Click(TObject *Sender)
 //---------------------------------------------------------------------------
 
 
+
 void __fastcall TF_XCalcMain::M_SentenceKeyPress(TObject *Sender, wchar_t &Key)
 {
 	SB_Msg->Panels->Items[0]->Text =  "계산시작";
 
+
 	if( Key == '\r')
 	{
-		ClearEqualLine();
-
 		Key = 0;
 
 		int iErrIdx =-1;
 
 		m_pList->Clear();
 
+		int iCaretLine = M_Sentence->Perform(EM_LINEFROMCHAR, M_Sentence->SelStart, 0);
+		String sCalcData = M_Sentence->Lines->Strings[iCaretLine];
+
+
+		if( sCalcData[sCalcData.Length()] == '=')
+		{
+			int iLen = sCalcData.Length();
+			sCalcData[iLen] = ' ' ;
+			M_Sentence->Lines->Strings[iCaretLine] = sCalcData.Trim();
+      }
+
 		try{
 
-			if( SplitSentence(M_Sentence->Text , m_pList , iErrIdx) == false )
+			if( SplitSentence(sCalcData, m_pList , iErrIdx) == false )
 			{
 				String s;
 				s.sprintf(L"%d번째 문자부터 수식 오류(Syntax Error)",iErrIdx+1 );
@@ -113,20 +119,24 @@ void __fastcall TF_XCalcMain::M_SentenceKeyPress(TObject *Sender, wchar_t &Key)
 				{
 					s.sprintf(L"계산실패");
 					SB_Msg->Panels->Items[0]->Text =  s;
+					M_Sentence->Lines->Add("ERROR");
+					Sleep(300);
+					M_Sentence->Lines->Strings[M_Sentence->Lines->Count-1] = "";
 				}
 				else
 				{
 					SB_Msg->Panels->Items[0]->Text =  g_sErrMsg;
 
-            }
+				}
 
 
 				return;
 
 			}
 
+			M_Sentence->Lines->Strings[iCaretLine] = M_Sentence->Lines->Strings[iCaretLine] + " =" ;
 
-			M_Sentence->Lines->Add("="+NumberToStr(result, 10));
+			M_Sentence->Lines->Insert(iCaretLine+1, NumberToStr(result, 10));
 		}
 		catch(Exception &e)
 		{
@@ -155,12 +165,6 @@ void __fastcall TF_XCalcMain::ClearEqualLine(void)
 	}
 
 }
-void __fastcall TF_XCalcMain::RG_AngleClick(TObject *Sender)
-{
-
-	SetAngleType((ANGLE_TYPE)RG_Angle->ItemIndex);
-}
-//---------------------------------------------------------------------------
 
 void __fastcall TF_XCalcMain::M_SentenceKeyDown(TObject *Sender, WORD &Key, TShiftState Shift)
 
@@ -171,6 +175,44 @@ void __fastcall TF_XCalcMain::M_SentenceKeyDown(TObject *Sender, WORD &Key, TShi
 		F_Help->Show();
 
 	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TF_XCalcMain::Exit1Click(TObject *Sender)
+{
+	Close();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TF_XCalcMain::Help1Click(TObject *Sender)
+{
+	F_Help->Show();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TF_XCalcMain::Radian1Click(TObject *Sender)
+{
+
+	SetAngleType((ANGLE_TYPE)AT_RAD);
+	Degree1->Checked = false;
+	Radian1->Checked = true;
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TF_XCalcMain::Degree1Click(TObject *Sender)
+{
+	SetAngleType((ANGLE_TYPE)AT_DEG);
+	Degree1->Checked = true;
+	Radian1->Checked = false;
+
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TF_XCalcMain::Clear1Click(TObject *Sender)
+{
+	M_Sentence->Clear();
 }
 //---------------------------------------------------------------------------
 

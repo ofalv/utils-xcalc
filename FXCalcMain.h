@@ -11,26 +11,33 @@
 #include <ToolWin.hpp>
 #include <ImgList.hpp>
 #include <ExtCtrls.hpp>
+#include <Menus.hpp>
 //---------------------------------------------------------------------------
 class TF_XCalcMain : public TForm
 {
 __published:	// IDE-managed Components
 	TMemo *M_Sentence;
-	TToolBar *ToolBar1;
-	TToolButton *ToolButton1;
-	TImageList *ImageList1;
-	TRadioGroup *RG_Angle;
 	TStatusBar *SB_Msg;
+	TMainMenu *MainMenu1;
+	TMenuItem *Exit1;
+	TMenuItem *Help1;
+	TMenuItem *AngleType1;
+	TMenuItem *Radian1;
+	TMenuItem *Degree1;
+	TMenuItem *Clear1;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);
 	void __fastcall FormHide(TObject *Sender);
-	void __fastcall ToolButton1Click(TObject *Sender);
 	void __fastcall ToolButton2Click(TObject *Sender);
 	void __fastcall ToolButton3Click(TObject *Sender);
 	void __fastcall M_SentenceKeyPress(TObject *Sender, wchar_t &Key);
-	void __fastcall RG_AngleClick(TObject *Sender);
 	void __fastcall M_SentenceKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
+	void __fastcall Exit1Click(TObject *Sender);
+	void __fastcall Help1Click(TObject *Sender);
+	void __fastcall Radian1Click(TObject *Sender);
+	void __fastcall Degree1Click(TObject *Sender);
+	void __fastcall Clear1Click(TObject *Sender);
 
 private:	// User declarations
 	TList *m_pList;
