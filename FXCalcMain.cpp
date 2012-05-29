@@ -231,6 +231,16 @@ String TF_XCalcMain::GetCommaStr(String sNumber)
 
 	int len = sNumber.Length();
 
+	int iPoint = sNumber.Pos(".");
+
+	// 소숫점 이하 자리 복사
+	if( iPoint > 0)
+	{
+		sBuf = sNumber.SubString(iPoint, len-iPoint);
+		len = iPoint-1;
+	}
+
+
 	for(int i=0; i<len ; i++)
 	{
 		if( i>0 && i%3 == 0  && sNumber[len-i]!='-')
@@ -252,3 +262,4 @@ String TF_XCalcMain::DeleteComma(String strText)
 	return strText;
 
 }
+
