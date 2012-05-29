@@ -1,7 +1,6 @@
 object F_XCalcMain: TF_XCalcMain
   Left = 0
   Top = 0
-  Caption = #51060#49457#50676' '#44228#49328#44592'  ( Ver 1.0.4 )'
   ClientHeight = 505
   ClientWidth = 339
   Color = clBtnFace
