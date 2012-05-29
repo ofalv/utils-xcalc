@@ -11,6 +11,10 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
+
+extern String g_sVerStr;
+
+
 TF_XCalcMain *F_XCalcMain;
 //---------------------------------------------------------------------------
 __fastcall TF_XCalcMain::TF_XCalcMain(TComponent* Owner)
@@ -24,6 +28,8 @@ void __fastcall TF_XCalcMain::FormCreate(TObject *Sender)
 	m_pList = new TList();
 
 	SetAngleType(AT_DEG);
+
+	Caption = "이성열 계산기 - " + g_sVerStr;
 
 }
 //---------------------------------------------------------------------------
@@ -90,6 +96,9 @@ void __fastcall TF_XCalcMain::M_SentenceKeyPress(TObject *Sender, wchar_t &Key)
 		int iCaretLine = M_Sentence->Perform(EM_LINEFROMCHAR, M_Sentence->SelStart, 0);
 		String sCalcData = M_Sentence->Lines->Strings[iCaretLine];
 
+		// 콤마 제거
+		sCalcData = DeleteComma(sCalcData);
+
 
 		if( sCalcData[sCalcData.Length()] == '=')
 		{
@@ -136,7 +145,7 @@ void __fastcall TF_XCalcMain::M_SentenceKeyPress(TObject *Sender, wchar_t &Key)
 
 			M_Sentence->Lines->Strings[iCaretLine] = M_Sentence->Lines->Strings[iCaretLine] + " =" ;
 
-			M_Sentence->Lines->Insert(iCaretLine+1, NumberToStr(result, 10));
+			M_Sentence->Lines->Insert(iCaretLine+1, GetCommaStr(NumberToStr(result, 10)));
 		}
 		catch(Exception &e)
 		{
@@ -215,4 +224,31 @@ void __fastcall TF_XCalcMain::Clear1Click(TObject *Sender)
 	M_Sentence->Clear();
 }
 //---------------------------------------------------------------------------
+// Comma 추가된 문자열을 리턴한다.
+String TF_XCalcMain::GetCommaStr(String sNumber)
+{
+	String sBuf;
 
+	int len = sNumber.Length();
+
+	for(int i=0; i<len ; i++)
+	{
+		if( i>0 && i%3 == 0  && sNumber[len-i]!='-')
+			sBuf = "," + sBuf;
+
+		sBuf = String(sNumber[len-i]) + sBuf;
+
+	}
+
+	return sBuf;
+
+}
+
+
+// 텍스트에서 Comma 를 제거한다.
+String TF_XCalcMain::DeleteComma(String strText)
+{
+	strText = StringReplace(strText , ",", "", TReplaceFlags()<<rfReplaceAll);
+	return strText;
+
+}

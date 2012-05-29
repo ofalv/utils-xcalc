@@ -41,6 +41,10 @@ __published:	// IDE-managed Components
 
 private:	// User declarations
 	TList *m_pList;
+
+	String GetCommaStr(String sNumber);
+	String DeleteComma(String strText);
+
 public:		// User declarations
 	__fastcall TF_XCalcMain(TComponent* Owner);
 	void __fastcall ClearEqualLine(void);
