@@ -145,7 +145,12 @@ void __fastcall TF_XCalcMain::M_SentenceKeyPress(TObject *Sender, wchar_t &Key)
 
 			M_Sentence->Lines->Strings[iCaretLine] = M_Sentence->Lines->Strings[iCaretLine] + " =" ;
 
+			// 마지막에 빈줄이 없으면 빈줄을 하나 추가함
+			if( M_Sentence->Lines->Count <= iCaretLine+1 || M_Sentence->Lines->Strings[iCaretLine+1].Trim()!="")
+				M_Sentence->Lines->Insert(iCaretLine+1, "");
+
 			M_Sentence->Lines->Insert(iCaretLine+1, GetCommaStr(NumberToStr(result, 10)));
+
 		}
 		catch(Exception &e)
 		{
