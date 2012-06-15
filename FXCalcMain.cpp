@@ -238,21 +238,19 @@ String TF_XCalcMain::GetCommaStr(String sNumber)
 
 	int iPoint = sNumber.Pos(".");
 
-	// 소숫점 이하 자리 복사
+	// 소숫점 이하 자리 복사(소숫점 포함 )
 	if( iPoint > 0)
 	{
-		sBuf = sNumber.SubString(iPoint, len-iPoint);
+		sBuf = sNumber.SubString(iPoint, len-iPoint+1);
 		len = iPoint-1;
 	}
 
-
+	// 정수부분에 Comma 삽입
 	for(int i=0; i<len ; i++)
 	{
 		if( i>0 && i%3 == 0  && sNumber[len-i]!='-')
 			sBuf = "," + sBuf;
-
 		sBuf = String(sNumber[len-i]) + sBuf;
-
 	}
 
 	return sBuf;
