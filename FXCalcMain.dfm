@@ -32,7 +32,9 @@ object F_XCalcMain: TF_XCalcMain
     Font.Style = [fsBold]
     ImeName = 'Microsoft Office IME 2007'
     Lines.Strings = (
-      #44228#49328#49885#51012' '#51077#47141#54616#49464#50836)
+      ''
+      ''
+      '')
     ParentFont = False
     ScrollBars = ssBoth
     TabOrder = 0
