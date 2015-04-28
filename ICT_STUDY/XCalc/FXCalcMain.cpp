@@ -96,6 +96,12 @@ void __fastcall TF_XCalcMain::M_SentenceKeyPress(TObject *Sender, wchar_t &Key)
 		int iCaretLine = M_Sentence->Perform(EM_LINEFROMCHAR, M_Sentence->SelStart, 0);
 		String sCalcData = M_Sentence->Lines->Strings[iCaretLine];
 
+		if( sCalcData.Trim() == "")
+		{
+			M_Sentence->Lines->Insert(iCaretLine, "");
+			return;
+      }
+
 		// ÄÞ¸¶ Á¦°Å
 		sCalcData = DeleteComma(sCalcData);
 
