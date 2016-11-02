@@ -12,7 +12,7 @@ object F_XCalcMain: TF_XCalcMain
   FormStyle = fsStayOnTop
   Menu = MainMenu1
   OldCreateOrder = False
-  Position = poDesktopCenter
+  Position = poScreenCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnHide = FormHide
