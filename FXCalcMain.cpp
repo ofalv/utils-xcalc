@@ -15,6 +15,9 @@
 extern String g_sVerStr;
 
 
+static String g_sBackupFile = "Backup.txt";
+
+
 TF_XCalcMain *F_XCalcMain;
 //---------------------------------------------------------------------------
 __fastcall TF_XCalcMain::TF_XCalcMain(TComponent* Owner)
@@ -25,11 +28,18 @@ __fastcall TF_XCalcMain::TF_XCalcMain(TComponent* Owner)
 void __fastcall TF_XCalcMain::FormCreate(TObject *Sender)
 {
 	//
+	if( FileExists(g_sBackupFile) == true )
+	{
+		M_Sentence->Lines->LoadFromFile(g_sBackupFile);
+	}
+
+
 	m_pList = new TList();
 
 	SetAngleType(AT_DEG);
 
 	Caption = "이성열 계산기 - " + g_sVerStr;
+
 
 }
 //---------------------------------------------------------------------------
@@ -37,6 +47,7 @@ void __fastcall TF_XCalcMain::FormCreate(TObject *Sender)
 void __fastcall TF_XCalcMain::FormDestroy(TObject *Sender)
 {
 	//
+	M_Sentence->Lines->SaveToFile(g_sBackupFile);
 
 	delete m_pList;
 }
