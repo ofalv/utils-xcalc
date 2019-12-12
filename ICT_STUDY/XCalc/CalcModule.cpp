@@ -72,15 +72,17 @@ bool GetFuncValue(/* IN*/String sFuncName, double dValue1, /*OUT*/double &dResul
 void LogSplitList(TList *pList, String sTitle)
 {
 
-	LOG_PRINTFW("TEST", L"-------------- SENTENCE LIST (\"%s\") : count=%d , iIdx=%d ------------------"
-		, sTitle=="" ? String("no title") : sTitle , pList->Count, g_iIdx);
-
-	for (int i = 0; i < pList->Count; i++)
-	{
-		LOG_PRINTFW("TEST", L"%d:type=%s: item=\"%s\"", i, asTypeStr[ ((CalcItem*)pList->Items[i])->m_eType ]
-			, ((CalcItem*)pList->Items[i])->m_sData );
-	}
-
+//
+//
+//	LOG_PRINTFW("TEST", L"-------------- SENTENCE LIST (\"%s\") : count=%d , iIdx=%d ------------------"
+//		, sTitle=="" ? String("no title") : sTitle , pList->Count, g_iIdx);
+//
+//	for (int i = 0; i < pList->Count; i++)
+//	{
+//		LOG_PRINTFW("TEST", L"%d:type=%s: item=\"%s\"", i, asTypeStr[ ((CalcItem*)pList->Items[i])->m_eType ]
+//			, ((CalcItem*)pList->Items[i])->m_sData );
+//	}
+//
 }
 
 
