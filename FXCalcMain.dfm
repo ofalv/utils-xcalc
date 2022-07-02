@@ -66,13 +66,17 @@ object F_XCalcMain: TF_XCalcMain
         OnClick = Degree1Click
       end
     end
-    object Help1: TMenuItem
-      Caption = '&Help'
-      OnClick = Help1Click
+    object menuTool: TMenuItem
+      Caption = '&Tool'
+      OnClick = menuToolClick
     end
     object Clear1: TMenuItem
       Caption = '&Clear'
       OnClick = Clear1Click
+    end
+    object Help1: TMenuItem
+      Caption = '&Help'
+      OnClick = Help1Click
     end
     object Exit1: TMenuItem
       Caption = 'E&xit'
