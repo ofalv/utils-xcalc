@@ -25,6 +25,7 @@ __published:	// IDE-managed Components
 	TMenuItem *Radian1;
 	TMenuItem *Degree1;
 	TMenuItem *Clear1;
+	TMenuItem *menuTool;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);
@@ -38,6 +39,7 @@ __published:	// IDE-managed Components
 	void __fastcall Radian1Click(TObject *Sender);
 	void __fastcall Degree1Click(TObject *Sender);
 	void __fastcall Clear1Click(TObject *Sender);
+	void __fastcall menuToolClick(TObject *Sender);
 
 private:	// User declarations
 	TList *m_pList;

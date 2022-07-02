@@ -8,6 +8,7 @@
 #include "FXCalcMain.h"
 #include "CalcModule.h"
 #include "FHelp.h"
+#include "FMathTest.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -38,7 +39,7 @@ void __fastcall TF_XCalcMain::FormCreate(TObject *Sender)
 
 	SetAngleType(AT_DEG);
 
-	Caption = "이성열 계산기 - " + g_sVerStr;
+	Caption = "크레브 계산기 - " + g_sVerStr;
 
 
 }
@@ -282,4 +283,12 @@ String TF_XCalcMain::DeleteComma(String strText)
 	return strText;
 
 }
+
+
+
+void __fastcall TF_XCalcMain::menuToolClick(TObject *Sender)
+{
+	F_MathTest->Show();
+}
+//---------------------------------------------------------------------------
 

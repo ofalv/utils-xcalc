@@ -46,14 +46,16 @@ object F_Help: TF_Help
       '2*(1+(2+3))'
       '-------------------------------------------------------------'
       ''
+      '>>>  TOOL'
+      '- '#54924#51204' '#48320#54872' '#44228#49328
+      '- '#46160#51216#51032' '#44033#46020' '#44228#49328
+      ''
+      ''
       #47564#46304#49324#46988':'
-      #51060#49457#50676' '
-      'sylee@ict-lab.com'
-      'Twitter : @SungRyoulLee')
+      #53356#47112#48652
+      'ofalv@naver.com')
     ParentFont = False
     ReadOnly = True
     TabOrder = 0
-    ExplicitWidth = 353
-    ExplicitHeight = 426
   end
 end
